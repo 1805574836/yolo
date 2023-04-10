@@ -26,7 +26,7 @@ from utils.general import (LOGGER, check_requirements, check_suffix, check_versi
                            make_divisible, non_max_suppression, scale_coords, xywh2xyxy, xyxy2xywh)
 from utils.plots import Annotator, colors, save_one_box
 from utils.torch_utils import copy_attr, time_sync
-from utils.activations import Mish, AconC, MetaAconC
+from utils.activations import Mish, AconC, MetaAconC, FReLU, MemoryEfficientMish
 
 def autopad(k, p=None):  # kernel, padding
     # Pad to 'same'
@@ -44,15 +44,17 @@ class Conv(nn.Module):
         # self.act = nn.Identity() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
         # self.act = nn.Tanh() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
         # self.act = nn.Sigmoid() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
-        # self.act = nn.ReLU() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
+        self.act = nn.ReLU() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
         # self.act = nn.LeakyReLU(0.1) if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
         # self.act = nn.Hardswish() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
-        self.act = nn.SiLU() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
+        # self.act = nn.SiLU() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
         # self.act = Mish() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
         # self.act = AconC() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
         # self.act = MetaAconC() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
         # self.act = SiLU_beta() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
         # self.act = MetaAconC(c2) if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
+        # self.act = MemoryEfficientMish() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
+        # self.act = FReLU() if act is True else (act if isinstance(act, nn.Module) else nn.Identity())
 
     def forward(self, x):
         return self.act(self.bn(self.conv(x)))
